@@ -1,0 +1,7 @@
+{
+    "output_strategy": "redis",
+    "kafka_broker": "localhost:9092",
+    "kafka_topic": "dataset_topic",
+    "redis_host": "localhost",
+    "redis_port": 6379
+}
