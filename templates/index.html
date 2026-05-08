@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>MVC Apartments - Protected</title>
+    <style>
+       
+        .locked-mode .btn, 
+        .locked-mode form, 
+        .locked-mode a {
+            pointer-events: none;         
+        }
+
+      
+        #secret-unlocker {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background: transparent; 
+            z-index: 9999;
+            cursor: default;
+        }
+
+        
+        body { font-family: sans-serif; margin: 40px; background: #f4f4f4; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background: #333; color: white; }
+        .btn { padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; text-decoration: none; font-weight: bold; display: inline-block; }
+        .btn-add { background: #28a745; color: white; }
+        .btn-edit { background: #ffc107; color: black; }
+        .btn-del { background: #dc3545; color: white; }
+        .admin-bar { margin-bottom: 20px; display: flex; gap: 10px; }
+    </style>
+</head>
+<body class="locked-mode"> <div id="secret-unlocker" title="Нічого тут немає..."></div>
+
+    <div class="card">
+        <h1>Керування квартирами</h1>
+        
+        <div class="admin-bar">
+            <a href="/add" class="btn btn-add">➕ Додати</a>
+            <form action="/admin/generate" method="post"><button type="submit" class="btn">⚙️ Генерувати</button></form>
+            <form action="/admin/import" method="post"><button type="submit" class="btn">📥 Імпорт</button></form>
+            <form action="/admin/clear" method="post"><button type="submit" class="btn btn-del">🗑️ Очистити базу</button></form>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Адреса</th>
+                    <th>Ціна</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for apt in apartments %}
+                <tr>
+                    <td>{{ apt.id }}</td>
+                    <td>{{ apt.address }}</td>
+                    <td>{{ apt.price_per_night }} грн</td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <a href="/edit/{{ apt.id }}" class="btn btn-edit">Ред.</a>
+                            <form action="/delete/{{ apt.id }}" method="post">
+                                <button type="submit" class="btn btn-del">Х</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let clickCount = 0;
+        const secretBtn = document.getElementById('secret-unlocker');
+
+        secretBtn.addEventListener('click', () => {
+            clickCount++;
+            
+            if (clickCount === 3) {
+                // Викликаємо віконце для вводу даних
+                const login = prompt("Введіть логін:");
+                const password = prompt("Введіть пароль:");
+
+                
+                if (login === "admin" && password === "1234") {
+                    alert("Доступ дозволено! Кнопки розблоковані.");
+                    document.body.classList.remove('locked-mode'); 
+                    document.getElementById('secret-unlocker').style.display = 'none'; 
+                } else {
+                    alert("Невірний пароль!");
+                    clickCount = 0; 
+                }
+            }
+        });
+    </script>
+</body>
+</html>
